@@ -1,20 +1,26 @@
 import './App.scss';
+import { useState } from 'react';
 import { MoviesList } from './components/MoviesList';
 import moviesFromServer from './api/movies.json';
-import { useState } from 'react';
 
-function filteredMovies(moviesArray, query) {
+function getFilteredMovies(moviesArray, query) {
+  const normalizedQuery = query.trim().toLowerCase();
+
   return moviesArray.filter(movie => {
     const movieTitle = movie.title.toLowerCase();
     const movieDescription = movie.description.toLowerCase();
-    return movieTitle.includes(query.trim().toLowerCase()) || movieDescription.includes(query.trim().toLowerCase());
+
+    return (
+      movieTitle.includes(normalizedQuery) ||
+      movieDescription.includes(normalizedQuery)
+    );
   });
 }
 
 export const App = () => {
   const [query, setQuery] = useState('');
 
-  const visibleMovies = filteredMovies(moviesFromServer, query);
+  const visibleMovies = getFilteredMovies(moviesFromServer, query);
 
   return (
     <div className="page">
@@ -28,7 +34,7 @@ export const App = () => {
 
             <div className="control">
               <input
-                onChange={(e) => {
+                onChange={e => {
                   setQuery(e.target.value);
                 }}
                 type="text"
